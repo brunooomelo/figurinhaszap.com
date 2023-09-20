@@ -1,4 +1,5 @@
 import { environment } from "@/utils/environment";
+import { setCookie, parseCookies } from "nookies";
 import {
   ReactNode,
   createContext,
@@ -13,15 +14,19 @@ type User = {
   whatsapp: string;
   isAuthenticated: boolean;
 };
+type IOpenLogin = {
+  status?: boolean;
+  reset?: boolean;
+};
 type IContext = {
   user: User | null;
   isLogged: boolean;
   isOpen: boolean;
-  openLogin: (status?: boolean) => Promise<void>;
+  openLogin: (data?: IOpenLogin) => Promise<void>;
+  changeNumber: () => Promise<void>;
   logout: () => Promise<void>;
   setPin: (token: string) => Promise<void>;
   login: ({ whatsapp }: { whatsapp: string }) => Promise<void>;
-  token: string | null;
 };
 
 const Context = createContext({ user: null } as IContext);
@@ -31,16 +36,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLogged, setIsLogged] = useState(false);
   const [isOpen, setOpen] = useState(false);
-  const [token, setToken] = useState(null);
 
   const getSession = useCallback(async () => {
+    const cookies = parseCookies();
+    const token = cookies.phone_token;
+
     if (!token) return;
-    const session = await fetch("/session", {
+    const session = await fetch(`${environment.APIURL}/session`, {
       headers: {
         "x-auth-token": token,
       },
     }).then((res) => res.json());
 
+    if (session.error) {
+      alert(session.error);
+      return;
+    }
     setUser(session.data);
     setIsLogged(true);
   }, []);
@@ -50,17 +61,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
   }, []);
 
-  const openLogin = useCallback(async (status = true) => {
-    setOpen(status);
-  }, []);
+  const openLogin = useCallback(
+    async ({ status = true, reset = false } = {} as IOpenLogin) => {
+      if (reset) {
+        setUser(null);
+        setIsLogged(false);
+      }
+      setOpen(status);
+    },
+    []
+  );
 
   const login = async ({ whatsapp }: { whatsapp: string }) => {
     try {
       const response = await fetch(`${environment.APIURL}/login`, {
         method: "POST",
         body: JSON.stringify({
-          name,
-          whatsapp: `55${whatsapp}@c.us`,
+          whatsapp,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -109,16 +126,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       alert(response.message);
       const { id, isAuthenticated, whatsapp } = response.data;
       setUser({ id, isAuthenticated, whatsapp });
-      setToken(response.token);
+
+      setCookie(null, "phone_token", response.token, {
+        maxAge: 86400 * 7,
+        path: "/",
+      });
     } catch (error) {
       console.log(error);
       alert("Ocorreu um erro, tente mais tarde");
     }
   };
 
+  const changeNumber = async () => {
+    setUser(null);
+    setIsLogged(false);
+  };
+
   useEffect(() => {
     getSession();
-  }, []);
+  }, [getSession]);
 
   return (
     <Context.Provider
@@ -130,7 +156,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isOpen,
         login,
         setPin,
-        token,
+        changeNumber,
       }}
     >
       {children}

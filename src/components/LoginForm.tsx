@@ -2,6 +2,8 @@ import * as Dialog from "@radix-ui/react-dialog";
 
 import { Controller, useForm } from "react-hook-form";
 import { useAuth } from "./AuthContext";
+import { DDI } from "@/utils/DDI";
+import { useEffect } from "react";
 
 export const LoginForm = () => {
   const { isLogged, openLogin, user, login, isOpen } = useAuth();
@@ -10,22 +12,35 @@ export const LoginForm = () => {
     control,
     handleSubmit,
     formState: { isSubmitting },
+    watch,
+    reset,
   } = useForm({
     defaultValues: {
       whatsapp: "",
+      country: "+55",
     },
   });
 
   const onSubmit = async (data: any) => {
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    login({ whatsapp: data.whatsapp });
+    try {
+      const whatsapp = [data.country, data.whatsapp].join("");
+      login({ whatsapp });
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  useEffect(() => {
+    if (!isOpen) {
+      reset();
+    }
+  }, [isOpen, reset]);
   return (
     <Dialog.Root
       open={isOpen}
       onOpenChange={(state) => {
         if (!isSubmitting) {
-          openLogin(state);
+          openLogin({ status: state });
         }
       }}
     >
@@ -38,32 +53,68 @@ export const LoginForm = () => {
         >
           <form noValidate onSubmit={handleSubmit(onSubmit)}>
             <Dialog.Title className="text-zinc-900 m-0 text-[17px] font-medium">
-              Acesso ao Sistema
+              Bem-vindo ao nosso gerador
             </Dialog.Title>
             <Dialog.Description className="text-zinc-600 mt-[10px] mb-5 text-[15px] leading-normal">
-              Bem-vindo ao nosso sistema! Para proporcionar uma experiência
-              personalizada e segura, solicitamos seu nome e número de contato.
+              Para proporcionar uma experiência personalizada e segura,
+              solicitamos seu número de whatsapp{" "}
+              <strong>apenas para te enviar a figurinha</strong>.
             </Dialog.Description>
 
             <Controller
               control={control}
               name="whatsapp"
-              render={(props) => (
-                <fieldset className="mb-[15px] flex items-center gap-5">
-                  <label
-                    className="text-violet11 w-[90px] text-right text-[15px]"
-                    htmlFor={props.field.name}
-                  >
-                    Whatsapp
-                  </label>
-                  <input
-                    id={props.field.name}
-                    className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
-                    disabled={!user?.isAuthenticated && isLogged}
-                    {...props.field}
-                  />
-                </fieldset>
-              )}
+              render={(props) => {
+                const country = watch("country");
+                const placeholder = DDI.find((ddi) => ddi.ddi === country);
+                return (
+                  <div>
+                    <label
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                      htmlFor={props.field.name}
+                    >
+                      Whatsapp
+                    </label>
+                    <div className="relative mt-2 rounded-md shadow-sm">
+                      <Controller
+                        control={control}
+                        name="country"
+                        render={(selectProps) => {
+                          return (
+                            <div className="absolute inset-y-0 left-0 flex items-center">
+                              <label htmlFor="country" className="sr-only">
+                                Country
+                              </label>
+                              <select
+                                id="country"
+                                autoComplete="country"
+                                className="h-full rounded-md border-0 bg-transparent py-0 pl-3 pr-7 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
+                                disabled={!user?.isAuthenticated && isLogged}
+                                {...selectProps.field}
+                              >
+                                {DDI.map(({ ddi, sigla }) => (
+                                  <option value={ddi} key={ddi}>
+                                    {sigla}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          );
+                        }}
+                      />
+
+                      <input
+                        type="text"
+                        id={props.field.name}
+                        className="block w-full rounded-md border-0 py-1.5 pl-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        placeholder={placeholder?.placeholder}
+                        disabled={!user?.isAuthenticated && isLogged}
+                        {...props.field}
+                      />
+                    </div>
+                  </div>
+                );
+              }}
             />
 
             <span className="text-xs text-zinc-400 leading-none">
@@ -76,7 +127,7 @@ export const LoginForm = () => {
                 data-loading={isSubmitting}
                 type="button"
                 className="inline-flex h-[35px] border items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none data-[loading=true]:cursor-not-allowed"
-                onClick={() => openLogin(false)}
+                onClick={() => openLogin({ status: false })}
                 disabled={isSubmitting}
               >
                 Voltar
@@ -87,7 +138,7 @@ export const LoginForm = () => {
                 className="bg-indigo-600 text-white hover:bg-indigo-400 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none data-[loading=true]:cursor-not-allowed"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Enviando...." : "Cadastrar"}
+                {isSubmitting ? "Enviando...." : "Próximo"}
               </button>
             </div>
             <Dialog.Close asChild>

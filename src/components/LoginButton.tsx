@@ -1,6 +1,6 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { useState } from "react";
 import { useAuth } from "./AuthContext";
+import { hiddenPhone } from "@/utils/hiddenNumber";
 
 export const LoginButton = () => {
   const { isLogged, openLogin, user, logout } = useAuth();
@@ -16,7 +16,7 @@ export const LoginButton = () => {
             }
           }}
         >
-          {isLogged && user?.whatsapp ? user?.whatsapp : "Entrar"}
+          {isLogged && user?.whatsapp ? hiddenPhone(user?.whatsapp) : "Entrar"}
         </button>
       </DropdownMenu.Trigger>
 

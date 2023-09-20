@@ -7,6 +7,7 @@ import { LoginForm } from "@/components/LoginForm";
 import { PinForm } from "@/components/PinForm";
 import { LoginButton } from "@/components/LoginButton";
 import Head from "next/head";
+import nookies from "nookies";
 const font = Inter({ subsets: ["latin"] });
 
 export default function Home() {
@@ -15,7 +16,7 @@ export default function Home() {
     <>
       <Head>
         <title>
-          StickerZap: Deixe Suas Conversas de WhatsApp Muito Mais Divertidas!
+          Figurinhaszap: Deixe Suas Conversas de WhatsApp Muito Mais Divertidas!
         </title>
         <meta
           name="description"
@@ -24,7 +25,7 @@ export default function Home() {
         />
         <meta
           property="og:title"
-          content="StickerZap: Deixe Suas Conversas de WhatsApp Muito Mais Divertidas!"
+          content="Figurinhaszap: Deixe Suas Conversas de WhatsApp Muito Mais Divertidas!"
         />
         <meta
           property="og:description"
@@ -40,7 +41,7 @@ export default function Home() {
         /> */}
       </Head>
       <div className={`h-full lg:h-screen flex flex-col ${font.className}`}>
-        <div className="flex items-center justify-center gap-x-6 bg-emerald-800 px-6 py-2.5 sm:px-3.5 ">
+        <div className="flex items-center justify-center gap-x-6 bg-indigo-600 px-6 py-2.5 sm:px-3.5 ">
           {/* sm:before:flex-1} */}
           <p className="text-sm leading-6 text-white">
             <a href="#">
@@ -53,7 +54,7 @@ export default function Home() {
                 <circle cx={1} cy={1} r={1} />
               </svg>
               Relaxe e aproveite a fase beta. Erros são apenas uma parte natural
-              da evolução. Nós cuidaremos deles. 🌿&nbsp;
+              da evolução. Nós cuidaremos deles.
               {/* <span aria-hidden="true">&rarr;</span> */}
             </a>
           </p>
@@ -70,17 +71,14 @@ export default function Home() {
         <main className="w-full h-full max-w-7xl mx-auto text-center lg:text-left px-4 md:container">
           <section className="flex flex-col gap-20 lg:gap-0 lg:flex-row items-center py-10">
             <div className="flex flex-col flex-1 gap-4">
-              <h1 className="text-4xl font-bold text-zinc-800">
-                Domine o WhatsApp com Stickers Incríveis! Crie, Produza e
-                Arrase! 😎
+              <h1 className="text-[56px] leading-tight font-bold text-zinc-800">
+                Crie figurinhas incríveis para seu WhatsApp e brilhe nas
+                conversas! 🔥
               </h1>
-              <p className="text-sm text-zinc-500">
-                Você ama WhatsApp e está pronto para se destacar? Bem-vindo à
-                revolução dos stickers! 🌟 Chega de conversas chatas e
-                monótonas. É hora de incendiar suas mensagens com os stickers
-                mais incríveis e personalizados que você já viu! Na Stickers
-                Incríveis, você é o mestre da criação e da produção de stickers.
-                💥
+              <p className="text-lg text-zinc-500">
+                Quer ser a estrela das conversas no WhatsApp? Crie figurinhas
+                incríveis que vão deixar todos impressionados! Torne-se o gênio
+                das figurinhas agora mesmo! 💥
               </p>
             </div>
             <UploadSticker />

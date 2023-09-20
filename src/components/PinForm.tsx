@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useAuth } from "./AuthContext";
 
 export const PinForm = () => {
-  const { isLogged, openLogin, user, setPin, isOpen } = useAuth();
+  const { isLogged, openLogin, user, setPin, isOpen, changeNumber } = useAuth();
 
   const {
     control,
@@ -19,18 +19,18 @@ export const PinForm = () => {
 
   const onSubmit = async (data: any) => {
     // TODO: error
-    if (!data.token) return 
+    if (!data.token) return;
     setPin(data.token);
   };
 
-  if (user?.isAuthenticated) return null
+  if (user?.isAuthenticated) return null;
 
   return (
     <Dialog.Root
       open={isOpen}
       onOpenChange={(state) => {
         if (!isSubmitting) {
-          openLogin(state);
+          openLogin({ status: state });
         }
       }}
     >
@@ -43,11 +43,12 @@ export const PinForm = () => {
         >
           <form noValidate onSubmit={handleSubmit(onSubmit)}>
             <Dialog.Title className="text-zinc-900 m-0 text-[17px] font-medium">
-              Acesso ao Sistema
+              Validação do telefone
             </Dialog.Title>
             <Dialog.Description className="text-zinc-600 mt-[10px] mb-5 text-[15px] leading-normal">
-              Bem-vindo ao nosso sistema! Para proporcionar uma experiência
-              personalizada e segura, solicitamos seu nome e número de contato.
+              Neste momento, eu preciso verificar se este número pertence a você
+              mesmo. <strong>Verifique o PIN</strong> enviado no whatsapp neste
+              numero.
             </Dialog.Description>
             <Controller
               control={control}
@@ -87,34 +88,42 @@ export const PinForm = () => {
                       className="text-violet11 shadow-violet7 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
                       id="pin"
                       {...props.field}
-
                     />
                   </fieldset>
                 )}
               />
             )}
             <span className="text-xs text-zinc-400 leading-none">
-              Seus dados serão usados exclusivamente para fins de autenticação e
-              comunicação relacionados ao sistema. Obrigado por escolher nosso
-              sistema.
+              Após a verificação será gerado um token para que você não precise
+              autenticar novamente.
             </span>
-            <div className="mt-[25px] flex justify-end gap-4">
+            <div className="mt-[25px] flex justify-between gap-4">
               <button
                 type="button"
                 className="inline-flex h-[35px] border items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none data-[loading=true]:cursor-not-allowed"
-                onClick={() => openLogin(false)}
+                onClick={() => openLogin({ status: false })}
                 disabled={isSubmitting}
               >
-                Voltar
+                Cancelar
               </button>
-              <button
-                data-loading={isSubmitting}
-                type="submit"
-                className="bg-indigo-600 text-white hover:bg-indigo-400 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none data-[loading=true]:cursor-not-allowed"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Enviando...." : "Cadastrar"}
-              </button>
+              <div className="flex justify-end gap-4">
+                <button
+                  type="button"
+                  className="inline-flex h-[35px] border items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none data-[loading=true]:cursor-not-allowed"
+                  onClick={changeNumber}
+                  disabled={isSubmitting}
+                >
+                  Trocar número
+                </button>
+                <button
+                  data-loading={isSubmitting}
+                  type="submit"
+                  className="bg-indigo-600 text-white hover:bg-indigo-400 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none data-[loading=true]:cursor-not-allowed"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Autenticando...." : "Autenticar"}
+                </button>
+              </div>
             </div>
             <Dialog.Close asChild>
               <button
