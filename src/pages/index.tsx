@@ -14,17 +14,20 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Cool Title</title>
-        <meta name="description" content="Checkout our cool page" key="desc" />
-        <meta property="og:title" content="Social Title for Cool Page" />
+        <title>StickerZap: Deixe Suas Conversas de WhatsApp Muito Mais Divertidas!</title>
+        <meta name="description" content="Não perca a chance de surpreender seus amigos! Crie stickers incríveis e leve a diversão para suas conversas no WhatsApp. É fácil e viciante!" key="desc" />
+        <meta
+          property="og:title"
+          content="StickerZap: Deixe Suas Conversas de WhatsApp Muito Mais Divertidas!"
+        />
         <meta
           property="og:description"
-          content="And a social description for our cool page"
+          content="Não perca a chance de surpreender seus amigos! Crie stickers incríveis e leve a diversão para suas conversas no WhatsApp. É fácil e viciante!"
         />
-        <meta
+        {/* <meta
           property="og:image"
           content="https://example.com/images/cool-page.jpg"
-        />
+        /> */}
       </Head>
       <div className={`h-full lg:h-screen flex flex-col ${font.className}`}>
         <div className="flex items-center justify-center gap-x-6 bg-emerald-800 px-6 py-2.5 sm:px-3.5 ">
