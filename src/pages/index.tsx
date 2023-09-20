@@ -14,8 +14,14 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>StickerZap: Deixe Suas Conversas de WhatsApp Muito Mais Divertidas!</title>
-        <meta name="description" content="Não perca a chance de surpreender seus amigos! Crie stickers incríveis e leve a diversão para suas conversas no WhatsApp. É fácil e viciante!" key="desc" />
+        <title>
+          StickerZap: Deixe Suas Conversas de WhatsApp Muito Mais Divertidas!
+        </title>
+        <meta
+          name="description"
+          content="Não perca a chance de surpreender seus amigos! Crie stickers incríveis e leve a diversão para suas conversas no WhatsApp. É fácil e viciante!"
+          key="desc"
+        />
         <meta
           property="og:title"
           content="StickerZap: Deixe Suas Conversas de WhatsApp Muito Mais Divertidas!"
@@ -24,6 +30,10 @@ export default function Home() {
           property="og:description"
           content="Não perca a chance de surpreender seus amigos! Crie stickers incríveis e leve a diversão para suas conversas no WhatsApp. É fácil e viciante!"
         />
+        <meta
+          name="ahrefs-site-verification"
+          content="0ff7ff9de03f88bcd24fe4511f725298dc7d90f3c915636975575d8b463daf90"
+        ></meta>
         {/* <meta
           property="og:image"
           content="https://example.com/images/cool-page.jpg"
