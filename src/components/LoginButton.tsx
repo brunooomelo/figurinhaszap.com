@@ -5,7 +5,6 @@ import { useAuth } from "./AuthContext";
 export const LoginButton = () => {
   const { isLogged, openLogin, user, logout } = useAuth();
 
-  console.log(isLogged, user)
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>

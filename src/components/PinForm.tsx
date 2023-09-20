@@ -16,7 +16,6 @@ export const PinForm = () => {
       token: "",
     },
   });
-  console.log(user?.whatsapp)
 
   const onSubmit = async (data: any) => {
     // TODO: error

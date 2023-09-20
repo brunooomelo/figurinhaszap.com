@@ -1,3 +1,4 @@
+import { environment } from "@/utils/environment";
 import {
   ReactNode,
   createContext,
@@ -6,11 +7,9 @@ import {
   useEffect,
   useState,
 } from "react";
-import { useLocalStorage } from "@uidotdev/usehooks";
 
 type User = {
   id: string;
-  name: string;
   whatsapp: string;
   isAuthenticated: boolean;
 };
@@ -21,28 +20,16 @@ type IContext = {
   openLogin: (status?: boolean) => Promise<void>;
   logout: () => Promise<void>;
   setPin: (token: string) => Promise<void>;
-  login: ({
-    name,
-    whatsapp,
-  }: {
-    name: string;
-    whatsapp: string;
-  }) => Promise<void>;
+  login: ({ whatsapp }: { whatsapp: string }) => Promise<void>;
+  token: string | null;
 };
 
-const mock = {
-  id: "7047ca31-af1e-42d3-9a01-401c40e24db6",
-  name: "bruno",
-  whatsapp: "5511998881910@c.us",
-  isAuthenticated: true,
-};
-const API_URL = "http://localhost:3333";
 const Context = createContext({ user: null } as IContext);
 export const useAuth = () => useContext(Context);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(mock);
-  const [isLogged, setIsLogged] = useState(!!mock ?? false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLogged, setIsLogged] = useState(false);
   const [isOpen, setOpen] = useState(false);
   const [token, setToken] = useState(null);
 
@@ -67,40 +54,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setOpen(status);
   }, []);
 
-  const login = async ({
-    name,
-    whatsapp,
-  }: {
-    name: string;
-    whatsapp: string;
-  }) => {
+  const login = async ({ whatsapp }: { whatsapp: string }) => {
     try {
-      const response = await fetch(`${API_URL}/signup`, {
+      const response = await fetch(`${environment.APIURL}/login`, {
         method: "POST",
         body: JSON.stringify({
           name,
-          whatsapp,
+          whatsapp: `55${whatsapp}@c.us`,
         }),
         headers: {
           "Content-Type": "application/json",
         },
       }).then((res) => res.json());
 
-      console.log(response);
       if (response.error) {
         // adicionar toast error
+        alert(response.error);
         return;
       }
 
       setUser({
         id: response.id,
-        isAuthenticated: false,
-        name,
-        whatsapp: response.wpp,
+        isAuthenticated: response.isAuthenticated,
+        whatsapp: response.whatsapp,
       });
       setIsLogged(true);
     } catch (error) {
       console.log(error);
+      alert("Ocorreu um erro, tente mais tarde");
     }
   };
 
@@ -108,10 +89,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       if (!user?.id || !token) {
         // TODO: error
-        return 
+        return;
       }
-      const response = await fetch(`${API_URL}/phone/validade`, {
-        method:'POST',
+      const response = await fetch(`${environment.APIURL}/phone/validade`, {
+        method: "POST",
         body: JSON.stringify({
           id: user.id,
           token,
@@ -120,21 +101,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           "Content-Type": "application/json",
         },
       }).then((res) => res.json());
-      console.log(response)
       if (response.error) {
-        alert(response.error)
-        return 
+        alert(response.error);
+        return;
       }
 
-      alert(response.message)
-      setToken(response.token)
+      alert(response.message);
+      const { id, isAuthenticated, whatsapp } = response.data;
+      setUser({ id, isAuthenticated, whatsapp });
+      setToken(response.token);
     } catch (error) {
-      console.log(error)
-      alert('Ocorreu um erro, tente mais tarde')
+      console.log(error);
+      alert("Ocorreu um erro, tente mais tarde");
     }
-    
   };
-
 
   useEffect(() => {
     getSession();
@@ -142,7 +122,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <Context.Provider
-      value={{ user, logout, isLogged, openLogin, isOpen, login, setPin }}
+      value={{
+        user,
+        logout,
+        isLogged,
+        openLogin,
+        isOpen,
+        login,
+        setPin,
+        token,
+      }}
     >
       {children}
     </Context.Provider>

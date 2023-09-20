@@ -12,15 +12,13 @@ export const LoginForm = () => {
     formState: { isSubmitting },
   } = useForm({
     defaultValues: {
-      name: "",
       whatsapp: "",
     },
   });
 
   const onSubmit = async (data: any) => {
-    console.log(data);
     await new Promise((resolve) => setTimeout(resolve, 1500));
-    login({ name: data.name, whatsapp: data.whatsapp });
+    login({ whatsapp: data.whatsapp });
   };
   return (
     <Dialog.Root
@@ -46,26 +44,6 @@ export const LoginForm = () => {
               Bem-vindo ao nosso sistema! Para proporcionar uma experiência
               personalizada e segura, solicitamos seu nome e número de contato.
             </Dialog.Description>
-
-            <Controller
-              control={control}
-              name="name"
-              render={(props) => (
-                <fieldset className="mb-[15px] flex items-center gap-5">
-                  <label
-                    className=" w-[90px] text-right text-[15px]"
-                    htmlFor={props.field.name}
-                  >
-                    Nome
-                  </label>
-                  <input
-                    id={props.field.name}
-                    className="shadow-zinc-800 focus:shadow-violet8 inline-flex h-[35px] w-full flex-1 items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none shadow-[0_0_0_1px] outline-none focus:shadow-[0_0_0_2px]"
-                    {...props.field}
-                  />
-                </fieldset>
-              )}
-            />
 
             <Controller
               control={control}
