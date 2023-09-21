@@ -1,5 +1,5 @@
 import { environment } from "@/utils/environment";
-import { setCookie, parseCookies } from "nookies";
+import { setCookie, parseCookies, destroyCookie } from "nookies";
 import {
   ReactNode,
   createContext,
@@ -57,6 +57,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const logout = useCallback(async () => {
+    destroyCookie(null, 'phone_token')
     setIsLogged(false);
     setUser(null);
   }, []);
