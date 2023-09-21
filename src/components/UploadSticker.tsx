@@ -40,22 +40,26 @@ export const UploadSticker = () => {
 
     const cookies = parseCookies();
     const token = cookies.phone_token;
+    try {
+      const response = await fetch(`${environment.APIURL}/stickers`, {
+        method: "POST",
+        body,
+        headers: {
+          "x-auth-token": token,
+        },
+      }).then((res) => res.json());
+      if (response.error) {
+        alert(response.error);
+        return;
+      }
 
-    const response = await fetch(`${environment.APIURL}/stickers`, {
-      method: "POST",
-      body,
-      headers: {
-        "x-auth-token": token,
-      },
-    }).then((res) => res.json());
-    if (response.error) {
-      alert(response.error);
-      return;
+      alert(response.message);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+      setSticker(null);
     }
-
-    alert(response.message);
-    setSticker(null);
-    setIsLoading(false);
   };
 
   return (
