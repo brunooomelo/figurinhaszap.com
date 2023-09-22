@@ -85,6 +85,7 @@ export const UploadSticker = () => {
                 className="sr-only"
                 onChange={handleFileSelected}
                 disabled={isLoading}
+                accept="image/png, image/webp, image/gif, image/jpeg"
               />
             </label>
           </>
@@ -108,6 +109,7 @@ export const UploadSticker = () => {
                     type="file"
                     className="sr-only"
                     onChange={handleFileSelected}
+                    accept="image/png, image/webp, image/gif, image/jpeg"
                   />
                 </label>
                 <p className="pl-1"> e veja a mágicas acontecer. 🪄</p>
