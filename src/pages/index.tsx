@@ -8,18 +8,21 @@ import { PinForm } from "@/components/PinForm";
 import { LoginButton } from "@/components/LoginButton";
 import Head from "next/head";
 import { pageview } from "@/utils/gtag";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useRouter } from "next/router";
 const font = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const { isLogged, user } = useAuth();
-  const router = useRouter()
-
+  const router = useRouter();
+  const logPageView = useCallback(() => pageview(router.pathname), [router]);
   useEffect(() => {
-    pageview(router.pathname)
-  }, [router])
-  
+    router.events.on("routeChangeComplete", logPageView);
+    return () => {
+      router.events.off("routeChangeComplete", logPageView);
+    };
+  }, [router, logPageView]);
+
   return (
     <>
       <Head>

@@ -6,20 +6,22 @@ import { useEffect } from "react";
 
 const MSWComponent = () => {
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      const { worker } = require('../../mocks/browser')
-      worker.start()
+    if (process.env.NODE_ENV === "development") {
+      const { worker } = require("../../mocks/browser");
+      worker.start();
     }
-  }, [])
-  return null
-}
+  }, []);
+  return null;
+};
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <AuthProvider>
-      <Component {...pageProps} />
-      <MSWComponent />
+    <>
+      <AuthProvider>
+        <Component {...pageProps} />
+        <MSWComponent />
+      </AuthProvider>
       <Analytics />
-    </AuthProvider>
+    </>
   );
 }
