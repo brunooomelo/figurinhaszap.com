@@ -36,12 +36,6 @@ export const UploadSticker = () => {
       return;
     }
 
-    event({
-      action: 'upload_image',
-      label: 'envio de imagem',
-      category: 'upload',
-      value: 1
-    })
     const body = new FormData();
     body.append("file", sticker!);
 
@@ -134,7 +128,15 @@ export const UploadSticker = () => {
           </button>
           <button
             className="rounded bg-indigo-600 px-2.5 py-1 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-indigo-300 hover:bg-indigo-500 cursor-pointer disabled:cursor-not-allowed disabled:opacity-30"
-            onClick={handleSubmit}
+            onClick={() => {
+              event({
+                action: "upload_image",
+                label: "envio de imagem",
+                category: "upload",
+                value: 1,
+              });
+              return handleSubmit()
+            }}
             disabled={!sticker || isLoading}
           >
             {isLoading ? "Gerando e enviando ..." : "Gerar figurinha 🪄"}
