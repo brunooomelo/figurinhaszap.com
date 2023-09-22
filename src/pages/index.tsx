@@ -7,10 +7,19 @@ import { LoginForm } from "@/components/LoginForm";
 import { PinForm } from "@/components/PinForm";
 import { LoginButton } from "@/components/LoginButton";
 import Head from "next/head";
+import { pageview } from "@/utils/gtag";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 const font = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const { isLogged, user } = useAuth();
+  const router = useRouter()
+
+  useEffect(() => {
+    pageview(router.pathname)
+  }, [router])
+  
   return (
     <>
       <Head>

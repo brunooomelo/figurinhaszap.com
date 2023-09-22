@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useAuth } from "./AuthContext";
 import { environment } from "@/utils/environment";
 import { parseCookies } from "nookies";
+import { event } from "@/utils/gtag";
 
 export const UploadSticker = () => {
   const { isLogged, user } = useAuth();
@@ -35,6 +36,12 @@ export const UploadSticker = () => {
       return;
     }
 
+    event({
+      action: 'upload_image',
+      label: 'envio de imagem',
+      category: 'upload',
+      value: 1
+    })
     const body = new FormData();
     body.append("file", sticker!);
 

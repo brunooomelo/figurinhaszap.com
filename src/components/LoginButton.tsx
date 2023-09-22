@@ -1,6 +1,7 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { useAuth } from "./AuthContext";
 import { hiddenPhone } from "@/utils/hiddenNumber";
+import { event } from "@/utils/gtag";
 
 export const LoginButton = () => {
   const { isLogged, openLogin, user, logout } = useAuth();
@@ -28,7 +29,15 @@ export const LoginButton = () => {
           >
             <DropdownMenu.Item
              className="group text-[13px] leading-none rounded flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-zinc-300 cursor-pointer"
-             onClick={logout}
+             onClick={() => {
+              event({
+                action: 'logout',
+                label: 'Sair da autenticacao',
+                category: 'login',
+                value: 1
+              })
+              logout()
+            }}
              >
               Sair
             </DropdownMenu.Item>

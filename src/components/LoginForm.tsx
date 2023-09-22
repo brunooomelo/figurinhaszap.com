@@ -9,6 +9,7 @@ import {
   parsePhoneNumberFromString,
   isValidNumber,
 } from "libphonenumber-js";
+import { event } from "@/utils/gtag";
 
 const validatePhoneNumber = (country: string) => (value: string) => {
   const phoneWithDDI = `${country}${value.trim().replace(/[^\d_]/g, "")}`;
@@ -163,6 +164,12 @@ export const LoginForm = () => {
                 type="submit"
                 className="bg-indigo-600 text-white hover:bg-indigo-400 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none data-[loading=true]:cursor-not-allowed disabled:opacity-30 disabled:cursor-not-allowed"
                 disabled={isSubmitting || !isValid}
+                onClick={() => event({
+                  action: 'authenticate',
+                  label: 'autenticacao',
+                  category: 'login',
+                  value: 1
+                })}
               >
                 {isSubmitting ? "Enviando...." : "Próximo"}
               </button>
