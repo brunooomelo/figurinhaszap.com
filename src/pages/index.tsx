@@ -7,7 +7,6 @@ import { LoginForm } from "@/components/LoginForm";
 import { PinForm } from "@/components/PinForm";
 import { LoginButton } from "@/components/LoginButton";
 import Head from "next/head";
-import nookies from "nookies";
 const font = Inter({ subsets: ["latin"] });
 
 export default function Home() {

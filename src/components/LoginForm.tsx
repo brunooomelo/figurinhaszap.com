@@ -4,6 +4,18 @@ import { Controller, useForm } from "react-hook-form";
 import { useAuth } from "./AuthContext";
 import { DDI } from "@/utils/DDI";
 import { useEffect } from "react";
+import InputMask from "react-input-mask";
+import {
+  parsePhoneNumberFromString,
+  isValidNumber,
+} from "libphonenumber-js";
+
+const validatePhoneNumber = (country: string) => (value: string) => {
+  const phoneWithDDI = `${country}${value.trim().replace(/[^\d_]/g, "")}`;
+  const phoneNumber = parsePhoneNumberFromString(phoneWithDDI);
+  if (!phoneNumber) return false;
+  return isValidNumber(phoneWithDDI);
+};
 
 export const LoginForm = () => {
   const { isLogged, openLogin, user, login, isOpen } = useAuth();
@@ -11,19 +23,25 @@ export const LoginForm = () => {
   const {
     control,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isValid },
     watch,
     reset,
+    setValue,
   } = useForm({
     defaultValues: {
       whatsapp: "",
       country: "+55",
     },
   });
+  const country = watch("country");
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: { whatsapp: string; country: string }) => {
     try {
-      const whatsapp = [data.country, data.whatsapp].join("");
+      const whatsapp = [
+        data.country,
+        data.whatsapp.trim().replace(/[^\d_]/g, ""),
+      ].join("");
+
       login({ whatsapp });
     } catch (error) {
       console.log(error);
@@ -35,6 +53,11 @@ export const LoginForm = () => {
       reset();
     }
   }, [isOpen, reset]);
+
+  useEffect(() => {
+    setValue("whatsapp", "");
+  }, [country, setValue]);
+
   return (
     <Dialog.Root
       open={isOpen}
@@ -64,8 +87,11 @@ export const LoginForm = () => {
             <Controller
               control={control}
               name="whatsapp"
+              rules={{
+                required: "O número de telefone é obrigatório.",
+                validate: validatePhoneNumber(country),
+              }}
               render={(props) => {
-                const country = watch("country");
                 const placeholder = DDI.find((ddi) => ddi.ddi === country);
                 return (
                   <div>
@@ -102,14 +128,14 @@ export const LoginForm = () => {
                           );
                         }}
                       />
-
-                      <input
+                      <InputMask
+                        {...props.field}
                         type="text"
                         id={props.field.name}
                         className="block w-full rounded-md border-0 py-1.5 pl-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         placeholder={placeholder?.placeholder}
                         disabled={!user?.isAuthenticated && isLogged}
-                        {...props.field}
+                        mask={placeholder!.mask!}
                       />
                     </div>
                   </div>
@@ -135,8 +161,8 @@ export const LoginForm = () => {
               <button
                 data-loading={isSubmitting}
                 type="submit"
-                className="bg-indigo-600 text-white hover:bg-indigo-400 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none data-[loading=true]:cursor-not-allowed"
-                disabled={isSubmitting}
+                className="bg-indigo-600 text-white hover:bg-indigo-400 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none data-[loading=true]:cursor-not-allowed disabled:opacity-30 disabled:cursor-not-allowed"
+                disabled={isSubmitting || !isValid}
               >
                 {isSubmitting ? "Enviando...." : "Próximo"}
               </button>
