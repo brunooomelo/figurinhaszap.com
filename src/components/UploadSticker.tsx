@@ -1,16 +1,16 @@
 import { ImageIcon } from "lucide-react";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "./AuthContext";
 import { environment } from "@/utils/environment";
 import { parseCookies } from "nookies";
 import { event } from "@/utils/gtag";
 
 export const UploadSticker = () => {
-  const { isLogged, user } = useAuth();
+  const { isLogged, user, openLogin } = useAuth();
   const [sticker, setSticker] = useState<File | null>(null);
-  const { openLogin } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const previewImagem = useMemo(
     () => (sticker ? URL.createObjectURL(sticker) : null),
@@ -18,30 +18,25 @@ export const UploadSticker = () => {
   );
 
   function handleFileSelected(event: React.ChangeEvent<HTMLInputElement>) {
-    const { files } = event.currentTarget;
+    const { files } = event.target;
 
     if (!files) return;
 
     const FIRST_ITEM = 0;
+
     const selectedFile = files.item(FIRST_ITEM);
-    setSticker(selectedFile);
+    if (!selectedFile) return;
+    const maxAllowedSize = 25 * 1024 * 1024;
+    setSticker(selectedFile?.size > maxAllowedSize ? null : selectedFile);
   }
 
-  const handleSubmit = async () => {
-    setIsLoading(true);
-
-    if (!isLogged || !user?.isAuthenticated) {
-      openLogin();
-      setIsLoading(false);
-      return;
-    }
-
-    const body = new FormData();
-    body.append("file", sticker!);
-
-    const cookies = parseCookies();
-    const token = cookies.phone_token;
+  const generateFormData = useCallback(async () => {
     try {
+      const body = new FormData();
+      body.append("file", sticker!);
+
+      const cookies = parseCookies();
+      const token = cookies.phone_token;
       const response = await fetch(`${environment.APIURL}/stickers`, {
         method: "POST",
         body,
@@ -59,16 +54,62 @@ export const UploadSticker = () => {
       console.log(error);
     } finally {
       setIsLoading(false);
+      setIsSubmitting(false);
       setSticker(null);
+
+    }
+  }, [sticker]);
+
+  console.log('stickers:', sticker)
+  const handleSubmit = async () => {
+    try {
+      setIsLoading(true);
+      if (!isLogged || !user?.isAuthenticated) {
+        setIsSubmitting(true);
+        await openLogin();
+        return;
+      }
+      await generateFormData();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    console.log(isLogged, isSubmitting)
+    if (isSubmitting && isLogged && user?.isAuthenticated) {
+      generateFormData();
+    }
+  }, [isSubmitting, generateFormData, isLogged, user?.isAuthenticated]);
+
+  const handlePaste = (e: ClipboardEvent) => {
+    const item = Array.from(e.clipboardData?.items || []).find((x) =>
+      /^image\//.test(x.type)
+    );
+
+    if (item) {
+      const blob = item.getAsFile();
+      
+      if (blob) {
+        setSticker(blob)
+      }
+    }
+  };
+  useEffect(() => {
+    window.addEventListener("paste", handlePaste)
+    return () => {
+      window.removeEventListener("paste", handlePaste)
+    }
+  }, [])
 
   return (
     <div className="flex flex-col lg:flex-row flex-1 justify-center items-center gap-4">
       <div className="flex flex-col gap-3">
         {previewImagem ? (
           <>
-            <label htmlFor="file-upload">
+            <label htmlFor="file-upload-preview">
               <Image
                 className="rounded w-full max-w-[278px]"
                 alt=""
@@ -79,8 +120,8 @@ export const UploadSticker = () => {
                 objectFit="fill"
               />
               <input
-                id="file-upload"
-                name="file-upload"
+                id="file-upload-preview"
+                name="file-upload-preview"
                 type="file"
                 className="sr-only"
                 onChange={handleFileSelected}
@@ -101,6 +142,7 @@ export const UploadSticker = () => {
                 <label
                   htmlFor="file-upload"
                   className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 hover:text-indigo-500"
+
                 >
                   <span>Faça o upload</span>
                   <input
@@ -110,6 +152,10 @@ export const UploadSticker = () => {
                     className="sr-only"
                     onChange={handleFileSelected}
                     accept="image/png, image/webp, image/gif, image/jpeg"
+                    onPasteCapture={(e) => {
+                      console.log('input')
+                      console.log(e.clipboardData.items)
+                    }}
                   />
                 </label>
                 <p className="pl-1"> e veja a mágicas acontecer. 🪄</p>
@@ -137,7 +183,7 @@ export const UploadSticker = () => {
                 category: "upload",
                 value: 1,
               });
-              return handleSubmit()
+              return handleSubmit();
             }}
             disabled={!sticker || isLoading}
           >
