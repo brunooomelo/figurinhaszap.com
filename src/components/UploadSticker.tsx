@@ -60,7 +60,6 @@ export const UploadSticker = () => {
     }
   }, [sticker]);
 
-  console.log('stickers:', sticker)
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
@@ -78,7 +77,6 @@ export const UploadSticker = () => {
   };
 
   useEffect(() => {
-    console.log(isLogged, isSubmitting)
     if (isSubmitting && isLogged && user?.isAuthenticated) {
       generateFormData();
     }
@@ -152,10 +150,6 @@ export const UploadSticker = () => {
                     className="sr-only"
                     onChange={handleFileSelected}
                     accept="image/png, image/webp, image/gif, image/jpeg"
-                    onPasteCapture={(e) => {
-                      console.log('input')
-                      console.log(e.clipboardData.items)
-                    }}
                   />
                 </label>
                 <p className="pl-1"> e veja a mágicas acontecer. 🪄</p>
