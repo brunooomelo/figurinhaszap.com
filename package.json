@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generatesitemap": "next-sitemap"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.4",
@@ -23,6 +24,8 @@
     "libphonenumber-js": "^1.10.44",
     "lucide-react": "^0.279.0",
     "next": "13.4.19",
+    "next-seo": "^6.1.0",
+    "next-sitemap": "^4.2.3",
     "nookies": "^2.5.2",
     "postcss": "8.4.29",
     "react": "18.2.0",

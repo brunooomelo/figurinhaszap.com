@@ -1,5 +1,3 @@
-import { Inter } from "next/font/google";
-import "react-international-phone/style.css";
 import { UploadSticker } from "@/components/UploadSticker";
 import { useAuth } from "@/components/AuthContext";
 import Link from "next/link";
@@ -10,6 +8,8 @@ import Head from "next/head";
 import { pageview } from "@/utils/gtag";
 import { useCallback, useEffect } from "react";
 import { useRouter } from "next/router";
+import { NextSeo } from "next-seo";
+import { Inter } from "next/font/google";
 const font = Inter({ subsets: ["latin"] });
 
 export default function Home() {
@@ -26,31 +26,15 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>
-          Figurinhaszap: Deixe Suas Conversas de WhatsApp Muito Mais Divertidas!
-        </title>
-        <meta
-          name="description"
-          content="Não perca a chance de surpreender seus amigos! Crie stickers incríveis e leve a diversão para suas conversas no WhatsApp. É fácil e viciante!"
-          key="desc"
-        />
-        <meta
-          property="og:title"
-          content="Figurinhaszap: Deixe Suas Conversas de WhatsApp Muito Mais Divertidas!"
-        />
-        <meta
-          property="og:description"
-          content="Não perca a chance de surpreender seus amigos! Crie stickers incríveis e leve a diversão para suas conversas no WhatsApp. É fácil e viciante!"
-        />
         <meta
           name="ahrefs-site-verification"
           content="0ff7ff9de03f88bcd24fe4511f725298dc7d90f3c915636975575d8b463daf90"
         ></meta>
-        {/* <meta
-          property="og:image"
-          content="https://example.com/images/cool-page.jpg"
-        /> */}
       </Head>
+      <NextSeo
+        title="Figurinhaszap: Deixe Suas Conversas de WhatsApp Muito Mais Divertidas!"
+        description="Não perca a chance de surpreender seus amigos! Crie stickers incríveis e leve a diversão para suas conversas no WhatsApp. É fácil e viciante!"
+      />
       <div className={`h-full lg:h-screen flex flex-col ${font.className}`}>
         <div className="flex items-center justify-center gap-x-6 bg-indigo-600 px-6 py-2.5 sm:px-3.5 ">
           {/* sm:before:flex-1} */}
