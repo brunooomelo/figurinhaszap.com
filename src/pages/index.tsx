@@ -10,6 +10,7 @@ import { useCallback, useEffect } from "react";
 import { useRouter } from "next/router";
 import { NextSeo } from "next-seo";
 import { Inter } from "next/font/google";
+import { Support } from "@/components/Support";
 const font = Inter({ subsets: ["latin"] });
 
 export default function Home() {
@@ -35,7 +36,9 @@ export default function Home() {
         title="Figurinhaszap: Deixe Suas Conversas de WhatsApp Muito Mais Divertidas!"
         description="Não perca a chance de surpreender seus amigos! Crie stickers incríveis e leve a diversão para suas conversas no WhatsApp. É fácil e viciante!"
       />
-      <div className={`h-full lg:h-screen flex flex-col ${font.className}`}>
+      <div
+        className={`h-full lg:h-screen flex flex-col ${font.className} relative`}
+      >
         <div className="flex items-center justify-center gap-x-6 bg-indigo-600 px-6 py-2.5 sm:px-3.5 ">
           {/* sm:before:flex-1} */}
           <p className="text-sm leading-6 text-white">
@@ -54,16 +57,18 @@ export default function Home() {
             </a>
           </p>
         </div>
-        <section className="shadow-sm">
+        {/* <section className="shadow-sm">
           <header className="container h-16 mx-auto flex items-center">
-            {/* <Github className="w-8 h-8" /> */}
-            <div className="flex items-stretch justify-end flex-1 px-2">
-              <LoginButton />
-            </div>
+            <Github className="w-8 h-8" />
+            {isLogged && (
+              <div className="flex items-stretch justify-end flex-1 px-2">
+                <LoginButton />
+              </div>
+            )}
           </header>
-        </section>
+        </section> */}
 
-        <main className="w-full h-full max-w-7xl mx-auto text-center lg:text-left px-4 md:container">
+        <main className="w-full h-full max-w-7xl mx-auto text-center lg:text-left px-4 md:container mt-16">
           <section className="flex flex-col gap-20 lg:gap-0 lg:flex-row items-center py-10">
             <div className="flex flex-col flex-1 gap-4">
               <h1 className="text-[56px] leading-tight font-bold text-zinc-800">
@@ -90,6 +95,7 @@ export default function Home() {
             Bruno Melo
           </Link>
         </footer>
+        <Support />
       </div>
       {!isLogged && <LoginForm />}
       {isLogged && !user?.isAuthenticated && !!user?.whatsapp && <PinForm />}
