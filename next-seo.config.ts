@@ -10,7 +10,7 @@ const config: DefaultSeoProps = {
       "Não perca a chance de surpreender seus amigos! Crie stickers incríveis e leve a diversão para suas conversas no WhatsApp. É fácil e viciante!",
     images: [
       {
-        url: "/home/cover.png",
+        url: "https://figurinhaszap.com/home/cover.png",
         width: 1280,
         height: 720,
         alt: "",
@@ -18,8 +18,8 @@ const config: DefaultSeoProps = {
     ],
   },
   twitter: {
-    handle: "@figurinhas",
-    site: "@brunooomelo",
+    site: "@figurinhas",
+    handle: "@brunooomelo",
     cardType: "summary_large_image",
   },
 };
