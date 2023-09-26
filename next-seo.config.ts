@@ -1,19 +1,21 @@
 import { DefaultSeoProps } from "next-seo";
 
 const config: DefaultSeoProps = {
+  canonical: "https://figurinhaszap.com",
   openGraph: {
     type: "website",
     locale: "pt_BR",
     url: "https://figurinhaszap.com",
-    siteName: "Figurinhaszap: Deixe Suas Conversas de WhatsApp Muito Mais Divertidas!",
+    siteName:
+      "Figurinhas: Deixe Suas Conversas de WhatsApp Muito Mais Divertidas!",
     description:
       "Não perca a chance de surpreender seus amigos! Crie stickers incríveis e leve a diversão para suas conversas no WhatsApp. É fácil e viciante!",
     images: [
       {
-        url: "https://figurinhaszap.com/home/cover.png",
+        url: "https://figurinhaszap.com/home/cover.webp",
         width: 1280,
         height: 720,
-        alt: "",
+        alt: "Imagem que representa a figurinhaszap.com",
       },
     ],
   },
