@@ -99,6 +99,7 @@ export const PinForm = () => {
             </span>
             <div className="mt-[25px] flex justify-between gap-4">
               <button
+                aria-label="Cancelar: Fechar a tela de autenticação"
                 type="button"
                 className="inline-flex h-[35px] border items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none data-[loading=true]:cursor-not-allowed"
                 onClick={() => openLogin({ status: false })}
@@ -108,6 +109,7 @@ export const PinForm = () => {
               </button>
               <div className="flex justify-end gap-4">
                 <button
+                  aria-label="Trocar de Numero:Voltar para a tela de autenticação"
                   type="button"
                   className="inline-flex h-[35px] border items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none data-[loading=true]:cursor-not-allowed"
                   onClick={changeNumber}
@@ -116,6 +118,7 @@ export const PinForm = () => {
                   Trocar número
                 </button>
                 <button
+                  aria-label="Autenticar:Finalizar a autenticação"
                   data-loading={isSubmitting}
                   type="submit"
                   className="bg-indigo-600 text-white hover:bg-indigo-400 focus:shadow-green7 inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none data-[loading=true]:cursor-not-allowed"
@@ -128,7 +131,7 @@ export const PinForm = () => {
             <Dialog.Close asChild>
               <button
                 className="text-violet11 hover:bg-violet4 focus:shadow-violet7 absolute top-[10px] right-[10px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] focus:outline-none"
-                aria-label="Close"
+                aria-label="Fechar a tela de autenticação"
               >
                 {/* <Cross2Icon /> */}
               </button>
