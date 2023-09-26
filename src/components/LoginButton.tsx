@@ -10,6 +10,7 @@ export const LoginButton = () => {
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <button
+          aria-label="Sair da autenticação"
           className="rounded bg-white px-2.5 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
           onClick={() => {
             if (!isLogged) {
@@ -28,17 +29,17 @@ export const LoginButton = () => {
             sideOffset={5}
           >
             <DropdownMenu.Item
-             className="group text-[13px] leading-none rounded flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-zinc-300 cursor-pointer"
-             onClick={() => {
-              event({
-                action: 'logout',
-                label: 'Sair da autenticacao',
-                category: 'login',
-                value: 1
-              })
-              logout()
-            }}
-             >
+              className="group text-[13px] leading-none rounded flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-zinc-300 cursor-pointer"
+              onClick={() => {
+                event({
+                  action: "logout",
+                  label: "Sair da autenticacao",
+                  category: "login",
+                  value: 1,
+                });
+                logout();
+              }}
+            >
               Sair
             </DropdownMenu.Item>
           </DropdownMenu.Content>

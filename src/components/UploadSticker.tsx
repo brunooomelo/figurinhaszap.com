@@ -56,7 +56,6 @@ export const UploadSticker = () => {
       setIsLoading(false);
       setIsSubmitting(false);
       setSticker(null);
-
     }
   }, [sticker]);
 
@@ -89,18 +88,18 @@ export const UploadSticker = () => {
 
     if (item) {
       const blob = item.getAsFile();
-      
+
       if (blob) {
-        setSticker(blob)
+        setSticker(blob);
       }
     }
   };
   useEffect(() => {
-    window.addEventListener("paste", handlePaste)
+    window.addEventListener("paste", handlePaste);
     return () => {
-      window.removeEventListener("paste", handlePaste)
-    }
-  }, [])
+      window.removeEventListener("paste", handlePaste);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col lg:flex-row flex-1 justify-center items-center gap-4">
@@ -140,7 +139,6 @@ export const UploadSticker = () => {
                 <label
                   htmlFor="file-upload"
                   className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 hover:text-indigo-500"
-
                 >
                   <span>Faça o upload</span>
                   <input
@@ -162,6 +160,7 @@ export const UploadSticker = () => {
         )}
         <div className="flex flex-col gap-1">
           <button
+            aria-label="Remover a imagem selecionada"
             className="rounded bg-white px-2.5 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 cursor-pointer disabled:cursor-not-allowed disabled:opacity-30"
             onClick={() => setSticker(null)}
             disabled={!sticker || isLoading}
@@ -169,6 +168,7 @@ export const UploadSticker = () => {
             Remover
           </button>
           <button
+            aria-label="Gerar figurinha para receber pelo Whatsapp"
             className="rounded bg-indigo-600 px-2.5 py-1 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-indigo-300 hover:bg-indigo-500 cursor-pointer disabled:cursor-not-allowed disabled:opacity-30"
             onClick={() => {
               event({

@@ -34,8 +34,12 @@ export const Support = () => {
 
   return (
     <DropdownMenu.Root open={open} onOpenChange={setOpen}>
-      <DropdownMenu.Trigger asChild>
-        <div className="absolute right-5 bottom-5 p-1 cursor-pointer rounded-full">
+      <DropdownMenu.Trigger
+        className="absolute right-5 bottom-5 p-1 cursor-pointer rounded-full"
+        aria-label="Ajuda: Clique para obter assistência ou informações adicionais"
+        asChild
+      >
+        <div>
           <HelpCircle className="w-10 h-10 text-emerald-500" />
         </div>
       </DropdownMenu.Trigger>
@@ -102,6 +106,7 @@ export const Support = () => {
               )}
             />
             <button
+              aria-label="Enviar formulário de ajuda por whatsapp"
               type="submit"
               className="w-full rounded bg-white px-2.5 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
               onClick={() => {
