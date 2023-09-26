@@ -14,7 +14,12 @@ import { GetStaticPaths, GetStaticProps } from "next";
 import { PageSEO, SEO_MULTI_PAGE } from "../utils/SEO";
 const font = Inter({ subsets: ["latin"] });
 
-export default function Home() {
+export default function GenerateSEO({
+  description,
+  heading,
+  heading_description,
+  title,
+}: PageSEO) {
   const { isLogged, user } = useAuth();
   const router = useRouter();
   const logPageView = useCallback(() => pageview(router.pathname), [router]);
@@ -33,10 +38,7 @@ export default function Home() {
           content="0ff7ff9de03f88bcd24fe4511f725298dc7d90f3c915636975575d8b463daf90"
         ></meta>
       </Head>
-      <NextSeo
-        title="Crie Figurinhas WhatsApp Grátis em 3 Passos | Online e Divertido"
-        description="Saiba como fazer figurinhas para WhatsApp de forma fácil e gratuita. Com nossa aplicação online, autentique-se, escolha a imagem e receba no WhatsApp. Diversão garantida! Começe agora."
-      />
+      <NextSeo title={title} description={description} />
       <div
         className={`h-full lg:h-screen flex flex-col ${font.className} relative`}
       >
@@ -73,14 +75,9 @@ export default function Home() {
           <section className="flex flex-col gap-20 lg:gap-0 lg:flex-row items-center py-10">
             <div className="flex flex-col flex-1 gap-4">
               <h1 className="text-[56px] leading-tight font-bold text-zinc-800">
-                Fazer Figurinhas para WhatsApp Nunca Foi Tão Fácil!
+                {heading}
               </h1>
-              <h2 className="text-lg text-zinc-500">
-                Descubra a maneira mais simples, gratuita e online de criar suas
-                próprias figurinhas para WhatsApp. Com apenas três passos -
-                autenticar, selecionar imagem e receber no WhatsApp - você
-                estará gerando figurinhas engraçadas em um piscar de olhos.
-              </h2>
+              <h2 className="text-lg text-zinc-500">{heading_description}</h2>
             </div>
             <UploadSticker />
           </section>
@@ -104,3 +101,26 @@ export default function Home() {
     </>
   );
 }
+
+export const getStaticPaths: GetStaticPaths = () => {
+  const paths = SEO_MULTI_PAGE.map(({ url }) => ({ params: { id: url } }));
+
+  return {
+    paths,
+    fallback: false,
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const hasSlug = SEO_MULTI_PAGE.find(({ url }) => params?.id === url);
+
+  if (!hasSlug) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: hasSlug,
+  };
+};
