@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.reactEasyCrop_Container {
+  @apply bg-zinc-900 rounded;
+}
+
+.reactEasyCrop_CropArea {
+  @apply text-black/80 !important;
+  /* color: rgba(0, 0, 0, 0.8) !important; */
+}
