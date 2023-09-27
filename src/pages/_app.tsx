@@ -6,6 +6,9 @@ import type { AppProps } from "next/app";
 import { useEffect } from "react";
 import SEO from "../../next-seo.config";
 import Head from "next/head";
+import { Banner } from "@/components/Banner";
+import { Inter } from "next/font/google";
+const font = Inter({ subsets: ["latin"] });
 
 const MSWComponent = () => {
   useEffect(() => {
@@ -40,8 +43,13 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
       <DefaultSeo {...SEO} />
       <AuthProvider>
-        <Component {...pageProps} />
-        <MSWComponent />
+        <div
+          className={`h-full lg:h-screen flex flex-col ${font.className} relative`}
+        >
+          <Banner />
+          <Component {...pageProps} />
+          <MSWComponent />
+        </div>
       </AuthProvider>
       <Analytics />
     </>
