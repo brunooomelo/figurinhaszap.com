@@ -32,12 +32,15 @@ export const UploadSticker = () => {
     control,
     formState: { isValid },
     handleSubmit,
-    reset
+    reset,
+    getValues,
   } = useForm({
     defaultValues: {
       name: "",
     },
   });
+
+  const { name } = getValues();
 
   function handleFileSelected(event: React.ChangeEvent<HTMLInputElement>) {
     const { files } = event.target;
@@ -64,7 +67,7 @@ export const UploadSticker = () => {
       body.append("x", String(crop.croppedAreaPixels?.x));
       body.append("width", String(crop.croppedAreaPixels?.width));
       body.append("height", String(crop.croppedAreaPixels?.height));
-      body.append("name", "bruno");
+      body.append("name", name || "");
 
       const cookies = parseCookies();
       const token = cookies.phone_token;
@@ -87,8 +90,8 @@ export const UploadSticker = () => {
       setIsLoading(false);
       setIsSubmitting(false);
       setSticker(null);
-      crop.reset()
-      reset()
+      crop.reset();
+      reset();
     }
   }, [crop, reset, sticker]);
 
@@ -105,8 +108,8 @@ export const UploadSticker = () => {
       console.log(error);
     } finally {
       setIsLoading(false);
-      crop.reset()
-      reset()
+      crop.reset();
+      reset();
     }
   };
 
@@ -132,15 +135,14 @@ export const UploadSticker = () => {
 
   const handleDialogSubmit = (open: boolean) => {
     if (open) {
-      setDialogSubmit(true)
+      setDialogSubmit(true);
     } else {
-      setDialogSubmit(false)
-      setSticker(null)
-      crop.reset()
-      reset()
+      setDialogSubmit(false);
+      setSticker(null);
+      crop.reset();
+      reset();
     }
-  }   
-
+  };
 
   useEffect(() => {
     window.addEventListener("paste", handlePaste);
