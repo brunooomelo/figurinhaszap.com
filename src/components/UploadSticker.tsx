@@ -1,21 +1,43 @@
-import { ImageIcon } from "lucide-react";
+import {
+  CrossIcon,
+  FileImage,
+  ImageIcon,
+  RotateCcw,
+  RotateCw,
+} from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "./AuthContext";
 import { environment } from "@/utils/environment";
 import { parseCookies } from "nookies";
 import { event } from "@/utils/gtag";
+import { Controller, useForm } from "react-hook-form";
+import * as Dialog from "@radix-ui/react-dialog";
+import ImageCrop from "./ImageCrop";
+import { useCrop } from "@/hooks/useCrop";
 
 export const UploadSticker = () => {
   const { isLogged, user, openLogin } = useAuth();
-  const [sticker, setSticker] = useState<File | null>(null);
+  const [sticker, setSticker] = useState<File | Blob | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [dialogSubmit, setDialogSubmit] = useState(false);
   const previewImagem = useMemo(
     () => (sticker ? URL.createObjectURL(sticker) : null),
     [sticker]
   );
+  const crop = useCrop();
+
+  const {
+    control,
+    formState: { isValid },
+    handleSubmit,
+    reset
+  } = useForm({
+    defaultValues: {
+      name: "",
+    },
+  });
 
   function handleFileSelected(event: React.ChangeEvent<HTMLInputElement>) {
     const { files } = event.target;
@@ -33,7 +55,16 @@ export const UploadSticker = () => {
   const generateFormData = useCallback(async () => {
     try {
       const body = new FormData();
-      body.append("file", sticker!);
+      if (!sticker) {
+        alert("Deu erro ao editar sua imagem.");
+        return;
+      }
+      body.append("file", sticker);
+      body.append("y", String(crop.croppedAreaPixels?.y));
+      body.append("x", String(crop.croppedAreaPixels?.x));
+      body.append("width", String(crop.croppedAreaPixels?.width));
+      body.append("height", String(crop.croppedAreaPixels?.height));
+      body.append("name", "bruno");
 
       const cookies = parseCookies();
       const token = cookies.phone_token;
@@ -56,10 +87,12 @@ export const UploadSticker = () => {
       setIsLoading(false);
       setIsSubmitting(false);
       setSticker(null);
+      crop.reset()
+      reset()
     }
-  }, [sticker]);
+  }, [crop, reset, sticker]);
 
-  const handleSubmit = async () => {
+  const onSubmit = async () => {
     try {
       setIsLoading(true);
       if (!isLogged || !user?.isAuthenticated) {
@@ -72,6 +105,8 @@ export const UploadSticker = () => {
       console.log(error);
     } finally {
       setIsLoading(false);
+      crop.reset()
+      reset()
     }
   };
 
@@ -94,6 +129,19 @@ export const UploadSticker = () => {
       }
     }
   };
+
+  const handleDialogSubmit = (open: boolean) => {
+    if (open) {
+      setDialogSubmit(true)
+    } else {
+      setDialogSubmit(false)
+      setSticker(null)
+      crop.reset()
+      reset()
+    }
+  }   
+
+
   useEffect(() => {
     window.addEventListener("paste", handlePaste);
     return () => {
@@ -167,22 +215,109 @@ export const UploadSticker = () => {
           >
             Remover
           </button>
-          <button
-            aria-label="Gerar figurinha para receber pelo Whatsapp"
-            className="rounded bg-indigo-600 px-2.5 py-1 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-indigo-300 hover:bg-indigo-500 cursor-pointer disabled:cursor-not-allowed disabled:opacity-30"
-            onClick={() => {
-              event({
-                action: "upload_image",
-                label: "envio de imagem",
-                category: "upload",
-                value: 1,
-              });
-              return handleSubmit();
-            }}
-            disabled={!sticker || isLoading}
+
+          <Dialog.Root
+            open={dialogSubmit && !!previewImagem}
+            onOpenChange={handleDialogSubmit}
           >
-            {isLoading ? "Gerando e enviando ..." : "Gerar figurinha 🪄"}
-          </button>
+            <Dialog.Trigger asChild>
+              <button
+                type="button"
+                aria-label="Gerar figurinha para receber pelo Whatsapp"
+                className="rounded bg-indigo-600 px-2.5 py-1 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-indigo-300 hover:bg-indigo-500 cursor-pointer disabled:cursor-not-allowed disabled:opacity-30"
+                onClick={() => {
+                  event({
+                    action: "upload_image",
+                    label: "envio de imagem",
+                    category: "upload",
+                    value: 1,
+                  });
+                }}
+                disabled={!sticker || isLoading}
+              >
+                {isLoading ? "Gerando e enviando ..." : "Gerar figurinha 🪄"}
+              </button>
+            </Dialog.Trigger>
+
+            <Dialog.Portal>
+              <Dialog.Overlay className="bg-zinc-700/90 data-[state=open]:animate-overlayShow fixed inset-0" />
+              <Dialog.Close asChild>
+                <button
+                  className="text-violet11 hover:bg-violet4 focus:shadow-violet7 absolute top-[10px] right-[10px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:shadow-[0_0_0_2px] focus:outline-none"
+                  aria-label="Close"
+                >
+                  <CrossIcon />
+                </button>
+              </Dialog.Close>
+              <Dialog.Content
+                className="data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[900px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none grid grid-cols-2 gap-2"
+                asChild
+              >
+                {previewImagem && (
+                  <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                    <ImageCrop previewImagem={previewImagem} {...crop} />
+                    <div>
+                      <div className="flex items-center gap-4">
+                        <span>Scale</span>
+                        <FileImage />
+                        <input
+                          type="range"
+                          min={1}
+                          step={0.1}
+                          max={3}
+                          onChange={(e) => crop.setZoom(Number(e.target.value))}
+                          value={crop.zoom}
+                        />
+                        <FileImage size="30" />
+                      </div>
+                      <Controller
+                        control={control}
+                        name="name"
+                        rules={{
+                          required: false,
+                          min: 3,
+                        }}
+                        render={(props) => (
+                          <div>
+                            <label
+                              htmlFor={props.field.name}
+                              className="block text-sm font-medium leading-6 text-gray-900"
+                            >
+                              Nome do sticker
+                            </label>
+                            <div className="relative mt-2 rounded-md shadow-sm">
+                              <input
+                                type="text"
+                                id={props.field.name}
+                                className="block w-full ring-1 ring-inset ring-gray-300 border-0 rounded-md py-1.5 pr-10 sm:text-sm sm:leading-6"
+                                placeholder="Seu nome"
+                                {...props.field}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      />
+                      <button
+                        type="submit"
+                        className="w-full rounded bg-white px-2.5 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+                        onClick={() => {
+                          event({
+                            action: "upload_image",
+                            label: "envio de imagem",
+                            category: "upload",
+                            value: 1,
+                          });
+                        }}
+                        disabled={!isValid || isSubmitting}
+                      >
+                        {isSubmitting ? "Enviando ..." : "Enviar"}
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </Dialog.Content>
+            </Dialog.Portal>
+          </Dialog.Root>
         </div>
       </div>
     </div>
