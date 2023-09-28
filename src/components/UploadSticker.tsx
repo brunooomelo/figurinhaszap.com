@@ -308,9 +308,9 @@ export const UploadSticker = () => {
                             value: 1,
                           });
                         }}
-                        disabled={!isValid || isSubmitting}
+                        disabled={!isValid || isSubmitting || isLoading}
                       >
-                        {isSubmitting ? "Enviando ..." : "Enviar"}
+                        {isSubmitting || isLoading ? "Enviando ..." : "Enviar"}
                       </button>
                     </div>
                   </form>
