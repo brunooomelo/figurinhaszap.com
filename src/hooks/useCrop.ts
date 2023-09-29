@@ -106,16 +106,27 @@ export type TypeCrop = {
 export const useCrop = (): TypeCrop => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area>();
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area>({
+    x: 0,
+    y: 0,
+    width: 100,
+    height: 100,
+  });
 
   const onCropComplete = (pixelCrop: Area) => {
+    console.log("croppixel", pixelCrop);
     setCroppedAreaPixels(pixelCrop);
   };
 
   const reset = () => {
     setCrop({ x: 0, y: 0 });
     setZoom(1);
-    setCroppedAreaPixels(undefined);
+    setCroppedAreaPixels({
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 100,
+    });
   };
 
   return {
