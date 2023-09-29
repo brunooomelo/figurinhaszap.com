@@ -1,10 +1,4 @@
-import {
-  CrossIcon,
-  FileImage,
-  ImageIcon,
-  RotateCcw,
-  RotateCw,
-} from "lucide-react";
+import { CrossIcon, FileImage, ImageIcon } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "./AuthContext";
@@ -34,6 +28,7 @@ export const UploadSticker = () => {
     handleSubmit,
     reset,
     getValues,
+    watch,
   } = useForm({
     defaultValues: {
       name: "",
@@ -41,6 +36,7 @@ export const UploadSticker = () => {
   });
 
   const { name } = getValues();
+  const nameWatch = watch("name");
 
   function handleFileSelected(event: React.ChangeEvent<HTMLInputElement>) {
     const { files } = event.target;
@@ -93,7 +89,7 @@ export const UploadSticker = () => {
       crop.reset();
       reset();
     }
-  }, [crop, reset, sticker]);
+  }, [crop, name, reset, sticker]);
 
   const onSubmit = async () => {
     try {
@@ -252,26 +248,19 @@ export const UploadSticker = () => {
                 </button>
               </Dialog.Close>
               <Dialog.Content
-                className="data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[900px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none grid grid-cols-2 gap-2"
+                className="data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[900px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none grid sm:grid-cols-2 gap-2"
                 asChild
               >
                 {previewImagem && (
                   <form onSubmit={handleSubmit(onSubmit)} noValidate>
-                    <ImageCrop previewImagem={previewImagem} {...crop} />
-                    <div>
-                      <div className="flex items-center gap-4">
-                        <span>Scale</span>
-                        <FileImage />
-                        <input
-                          type="range"
-                          min={1}
-                          step={0.1}
-                          max={3}
-                          onChange={(e) => crop.setZoom(Number(e.target.value))}
-                          value={crop.zoom}
-                        />
-                        <FileImage size="30" />
-                      </div>
+                    <div className="space-y-2">
+                      <ImageCrop previewImagem={previewImagem} {...crop} />
+                      <span className="block text-center text-sm text-zinc-700">
+                        {nameWatch && <strong>{nameWatch} - </strong>}{" "}
+                        <span className="text-zinc-500">figurinhaszap.com</span>
+                      </span>
+                    </div>
+                    <div className="flex flex-col gap-8 sm:gap-4">
                       <Controller
                         control={control}
                         name="name"
@@ -299,9 +288,33 @@ export const UploadSticker = () => {
                           </div>
                         )}
                       />
+                      <div className="flex flex-col gap-4 w-full">
+                        <label
+                          htmlFor="zoom"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Zoom
+                        </label>
+                        <div className="flex gap-2">
+                          <FileImage />
+                          <input
+                            id="zoom"
+                            className="flex-1"
+                            type="range"
+                            min={1}
+                            step={0.25}
+                            max={5}
+                            onChange={(e) =>
+                              crop.setZoom(Number(e.target.value))
+                            }
+                            value={crop.zoom}
+                          />
+                          <FileImage size="30" />
+                        </div>
+                      </div>
                       <button
                         type="submit"
-                        className="w-full rounded bg-white px-2.5 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="self-end w-full rounded bg-white px-2.5 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed mt-0 sm:mt-[6.5rem]"
                         onClick={() => {
                           event({
                             action: "upload_image",
