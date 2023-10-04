@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: "https://figurinhaszap.com",
+  siteUrl: "https://www.figurinhaszap.com",
   generateRobotsTxt: true,
   generateIndexSitemap: false,
 };
